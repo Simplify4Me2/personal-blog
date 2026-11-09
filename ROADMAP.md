@@ -173,7 +173,7 @@ personal-blog/
 
 ---
 
-## Phase 0 — Preparation
+## Phase 0 — ✅ Completed — Preparation
 
 ### S0.1 — Create a working branch
 - **Goal:** keep `master` deployable and practise a PR-style workflow.
