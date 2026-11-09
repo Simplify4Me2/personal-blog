@@ -1,1 +1,33 @@
 
+name: Build and Test React JS App
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+      
+      - name: Install dependencies
+        run: |
+          cd app
+          yarn install
+      
+      - name: Build
+        run: |
+          cd app
+          yarn build
+      
+      - name: Run tests
+        run: |
+          cd app
+          yarn test
