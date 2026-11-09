@@ -1,0 +1,134 @@
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/assets/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/assets/fonts/DM_Sans/DMSans-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('/assets/fonts/Fira_Code/FiraCode-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  font-synthesis: none;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --color-background: #fbf9f7;
+  --color-card: #ffffff;
+  --color-heading: #1c1a19;
+  --color-text: #34302d;
+  --color-muted: #4a4846;
+  --color-border: #dedcda;
+  --color-border-strong: #c0bfbf;
+  --color-accent: #5792c0;
+  --color-accent-hover: #022b4a;
+  --color-button-text: #ffffff;
+  --color-hover: #e1f1fe;
+  --color-code: #efedeb;
+  --color-error: #d92d20;
+  --color-success: #008531;
+  --font-mono: 'Fira Code', monospace;
+  --shadow: 0 8px 24px rgb(28 26 25 / 12%);
+
+  color: var(--color-text);
+  background: var(--color-background);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-background: #1c1a19;
+  --color-card: #201e1d;
+  --color-heading: #fbf9f7;
+  --color-text: #dedcda;
+  --color-muted: #c0bfbf;
+  --color-border: #34302d;
+  --color-border-strong: #4a4846;
+  --color-accent: #93cefc;
+  --color-accent-hover: #75b0de;
+  --color-button-text: #022b4a;
+  --color-hover: #34302d;
+  --color-code: #34302d;
+  --color-error: #f04438;
+  --color-success: #9dd3a9;
+  --shadow: 0 8px 24px rgb(0 0 0 / 30%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--color-background);
+  background-image: url('/assets/images/pattern-light.svg');
+  background-position: top center;
+  background-repeat: repeat-x;
+  color: var(--color-text);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+:root[data-theme='dark'] body {
+  background-image: url('/assets/images/pattern-dark.svg');
+}
+
+:root[data-theme='dark'] .social-links img {
+  filter: brightness(0) invert(1);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-button-text);
+}
+
+@media (max-width: 700px) {
+  :root {
+    font-size: 16px;
+  }
+
+  body {
+    background-size: auto 120px;
+  }
+}

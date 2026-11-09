@@ -68,7 +68,7 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
 ## Progress tracker
 
 - **Phase 0 — Preparation**
-  - [ ] S0.1 Create a working branch
+  - [x] S0.1 Create a working branch
   - [ ] S0.2 Study the design and build a component inventory
   - [ ] S0.3 Extract design tokens into a notes file
 - **Phase 1 — Scaffold**
@@ -173,7 +173,7 @@ personal-blog/
 
 ---
 
-## Phase 0 — Preparation
+## Phase 0 — ✅ Completed — Preparation
 
 ### S0.1 — Create a working branch
 - **Goal:** keep `master` deployable and practise a PR-style workflow.
@@ -191,7 +191,7 @@ personal-blog/
   2. List every repeated element: header, nav link (active and inactive), theme toggle, mobile menu, social icon button, article list item (with or without description), section heading with underline accent, text link, input, button, form message (error / success), callout (tip / warning / info), footer.
   3. For each element, write down its states: default, hover, focus-visible, active/current, disabled/pending, error.
 - **Done when:**
-  - [ ] There's a written inventory, for example in a scratch file or a GitHub issue. Don't commit design files.
+  - [x] There's a written inventory, for example in a scratch file or a GitHub issue. Don't commit design files.
 
 ### S0.3 — Extract design tokens
 - **Goal:** one place where every colour, font size, line height, spacing, radius and breakpoint is listed. **Answers Q1.**
@@ -201,7 +201,7 @@ personal-blog/
   3. Record the breakpoints the design implies.
 - **Hint:** semantic roles (`text-muted`) let one class work in both themes. Raw names (`neutral-600`) force you to write `dark:` variants everywhere.
 - **Done when:**
-  - [ ] There's a token table with light and dark values for each role.
+  - [x] There's a token table with light and dark values for each role.
 
 ---
 
@@ -215,7 +215,7 @@ personal-blog/
   3. `npm run dev`, then open the URL it prints.
   4. Check that `package.json` lists `react` / `react-dom` at **^19**.
 - **Done when:**
-  - [ ] The Vite starter page renders and the console has no errors.
+  - [x] The Vite starter page renders and the console has no errors.
 - **Commit:** `chore: scaffold vite react-ts app`
 
 ### S1.2 — Strip the boilerplate

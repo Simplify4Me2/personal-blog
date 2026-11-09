@@ -1,0 +1,49 @@
+{
+  "mcpServers": {
+    "aspire": {
+      "type": "local",
+      "command": "aspire",
+      "args": [
+        "agent",
+        "mcp"
+      ],
+      "env": {
+        "DOTNET_ROOT": "${DOTNET_ROOT}"
+      },
+      "tools": [
+        "*"
+      ]
+    },
+    "com.figma.mcp/mcp": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "tools": [
+        "*"
+      ]
+    },
+    "github/github-mcp-server": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "tools": [
+        "*"
+      ]
+    },
+    "microsoft/playwright-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "microsoftdocs/mcp": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": [
+        "*"
+      ]
+    }
+  }
+}
