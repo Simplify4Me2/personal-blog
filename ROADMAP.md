@@ -201,7 +201,7 @@ personal-blog/
   3. Record the breakpoints the design implies.
 - **Hint:** semantic roles (`text-muted`) let one class work in both themes. Raw names (`neutral-600`) force you to write `dark:` variants everywhere.
 - **Done when:**
-  - [ ] There's a token table with light and dark values for each role.
+  - [x] There's a token table with light and dark values for each role.
 
 ---
 
