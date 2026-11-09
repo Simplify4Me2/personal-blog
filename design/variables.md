@@ -1,6 +1,8 @@
 # Style Variables
 
 ## Color Variables
+Raw palette values from the design file, before assigning interface roles.
+
 | Variable | Hex Value | RGB Value | HSL Value |
 |---|---|---|---|
 | --color-neutral-900 | #1C1A19 | rgb(28, 26, 25) | hsl(20,6%, 10%) |
@@ -28,7 +30,21 @@
 | --color-red-400 | #F04438 | rgb(240, 68, 56) | hsl(4,86%, 58%) |
 | --color-red-600 | #D92D20 | rgb(217, 45, 32) | hsl(4,74%, 49%) |
 
+## Semantic Color Roles
+Map each role to the raw palette value used in each theme. Add or remove rows to match the design.
+
+| Semantic role | Light theme variable/value | Dark theme variable/value | Notes / usage |
+|---|---|---|---|
+| surface |  |  |  |
+| surface-card |  |  |  |
+| text |  |  |  |
+| text-muted |  |  |  |
+| border |  |  |  |
+| accent |  |  |  |
+|  |  |  |  |
+
 ## Typography Presets
+Record the design's type styles, including exact units for letter spacing and any responsive variants.
 
 | Preset | Font family | Style | Weight | Size | Line height | Letter spacing |
 |---|---|---|---|---|---|---|
@@ -44,7 +60,24 @@
 | text-preset-8(italic) | DM Sans | Italic | 400 | 16px | 130% | -0.2 |
 | text-preset-9 | Fira Code | Regular | 400 | 16px | 146% | -0.4 |
 
+## Borders
+Record border styles used by the design, including the color token or semantic role where applicable.
+
+| Token / component | Width | Style | Color token / role | Usage |
+|---|---|---|---|---|
+|  |  |  |  |  |
+|  |  |  |  |  |
+
+## Shadows
+Record the exact shadow values from Figma, including color, opacity, blur, spread, and offset.
+
+| Token / component | Value (CSS or Figma properties) | Usage |
+|---|---|---|
+|  |  |  |
+|  |  |  |
+
 ## Spacing Variables
+Spacing scale values from the design file.
 
 | Name | Pixels |
 |---|---|
@@ -64,6 +97,7 @@
 | spacing-1000 | 80 |
 
 ## Radius Variables
+Corner-radius scale values from the design file.
 
 | Name | Pixels |
 |---|---|
@@ -77,3 +111,12 @@
 | radius-20 | 20 |
 | radius-24 | 24 |
 | radius-full | 999 |
+
+## Breakpoints
+Record the viewport widths represented in the design and the threshold at which each layout changes.
+
+| Design size / frame | Viewport width | Breakpoint threshold / rule | Layout changes |
+|---|---|---|---|
+| Mobile |  |  |  |
+| Tablet |  |  |  |
+| Desktop |  |  |  |
