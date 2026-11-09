@@ -4,8 +4,6 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ['main']
-  pull_request:
-    branches: ['main']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,6 +36,9 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
+      - name: set app/ as working directory
+        run: cd app
+
       - name: Install dependencies
         run: yarn
         
@@ -51,7 +52,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: './dist'
+          path: './app/dist'
           
       - name: Deploy to GitHub Pages
         id: deployment
