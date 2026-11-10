@@ -61,7 +61,7 @@ function SocialLinks({ boxed = false }: { boxed?: boolean }) {
             rel="noreferrer"
             aria-label={social.label}
           >
-            <img src={`/assets/images/${social.icon}`} alt="" />
+            <img src={`${import.meta.env.BASE_URL}assets/images/${social.icon}`} alt="" />
           </a>
         </li>
       ))}
@@ -85,7 +85,7 @@ function Header({ page }: { page: string }) {
       <a className="avatar-link" href="/" aria-label="Paulina's blog home">
         <img
           className="avatar"
-          src="/assets/images/image-avatar.jpg"
+          src={`${import.meta.env.BASE_URL}assets/images/image-avatar.jpg`}
           alt="Paulina"
           width="48"
           height="48"
@@ -116,7 +116,7 @@ function Header({ page }: { page: string }) {
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
         >
           <img
-            src={`/assets/images/icon-${theme === 'light' ? 'moon' : 'sun'}.svg`}
+            src={`${import.meta.env.BASE_URL}assets/images/icon-${theme === 'light' ? 'moon' : 'sun'}.svg`}
             alt=""
           />
         </button>
@@ -129,7 +129,7 @@ function Header({ page }: { page: string }) {
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <img
-            src={`/assets/images/icon-menu${menuOpen ? '-close' : ''}.svg`}
+            src={`${import.meta.env.BASE_URL}assets/images/icon-menu${menuOpen ? '-close' : ''}.svg`}
             alt=""
           />
         </button>
@@ -263,10 +263,10 @@ function AboutPage() {
         <picture>
           <source
             media="(max-width: 600px)"
-            srcSet="/assets/images/image-workspace-small.jpg"
+            srcSet={`${import.meta.env.BASE_URL}assets/images/image-workspace-small.jpg`}
           />
           <img
-            src="/assets/images/image-workspace-large.jpg"
+            src={`${import.meta.env.BASE_URL}assets/images/image-workspace-large.jpg`}
             alt="Paulina's bright home office with plants, bookshelves, and a computer desk"
             width="1200"
             height="750"
@@ -339,7 +339,7 @@ function NewsletterPage() {
             role={feedback === 'error' ? 'alert' : 'status'}
           >
             <img
-              src={`/assets/images/icon-${feedback === 'error' ? 'error' : 'success'}.svg`}
+              src={`${import.meta.env.BASE_URL}assets/images/icon-${feedback === 'error' ? 'error' : 'success'}.svg`}
               alt=""
             />
             {feedback === 'error'

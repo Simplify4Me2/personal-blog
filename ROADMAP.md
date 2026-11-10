@@ -247,7 +247,7 @@ personal-blog/
   2. Confirm `resolveJsonModule` is enabled so you can import `data.json`.
   3. Look through the generated `eslint.config.js`. 🔀 Optionally add Prettier, plus `eslint-plugin-jsx-a11y` for accessibility linting. Log your choice.
 - **Done when:**
-  - [ ] `npx tsc -b` and `npm run lint` both pass.
+  - [x] `npx tsc -b` and `npm run lint` both pass.
 
 ### S1.4 — Configure the base path for GitHub Pages
 - **Goal:** asset URLs resolve under `https://<user>.github.io/personal-blog/`.
