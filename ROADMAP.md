@@ -225,7 +225,7 @@ personal-blog/
   2. Render a single `<h1>` from `App`.
   3. Set `<html lang="en">` and a real `<title>`, and point the favicon at the starter favicon (S1.5).
 - **Done when:**
-  - [ ] Only your own placeholder renders. `npm run build` and `npm run lint` both pass.
+  - [x] Only your own placeholder renders. `npm run build` and `npm run lint` both pass.
 - **Commit:** `chore: remove vite boilerplate`
 
 ### S1.3 — Tighten TypeScript and lint settings
