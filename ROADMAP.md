@@ -35,7 +35,7 @@ Goal · Files · Steps · Hints/gotchas · Done when · Commit
 |---|-------|----------|-------|
 | D1 | Framework | **React 19 + Vite**, client-side SPA | No SSR. `data.json` is bundled at build time. |
 | D2 | Language | **TypeScript** (strict) | |
-| D3 | Routing | **React Router v7** (package `react-router`) using a **hash router** | Required for GitHub Pages with zero server config. URLs look like `/#/blog/<slug>`. |
+| D3 | Routing | **React Router v8.5.1** (package `react-router`), delivered **incrementally**. **Plan A (Phases 5–10):** data mode with `createBrowserRouter`, `basename` taken from `import.meta.env.BASE_URL`, and a `404.html` copy of `index.html` for deep links on GitHub Pages. **Plan B (Phase 11):** migrate to React Router **framework mode** with build-time prerendering (SSG). | Clean URLs (`/personal-blog/blog/<slug>`), not hash URLs. The Plan A route table, layout and `:slug` param carry over to Plan B almost unchanged. The portfolio repo keeps its `HashRouter`. See D13–D14. |
 | D4 | Styling | **Tailwind CSS v4** via `@tailwindcss/vite` | Design tokens live in `@theme`. Dark mode uses a custom variant tied to `data-theme`. |
 | D5 | Markdown | **react-markdown + remark-gfm** | Renders React elements, not `innerHTML`, so there's no XSS sink. GFM is needed for tables. Callouts are handled with a custom `blockquote` component. |
 | D6 | Tests | **Vitest + React Testing Library** (jsdom) | Tests are added alongside each feature. |
@@ -45,7 +45,9 @@ Goal · Files · Steps · Hints/gotchas · Done when · Commit
 | D10 | Theme | **System preference by default, manual override saved in `localStorage`** | An inline script in `index.html` prevents a flash of the wrong theme. |
 | D11 | Package manager | **npm** | Node 22 / npm 11 are installed. |
 | D12 | Content source of truth | **`data.json`**, not the starter HTML | The starter HTML lists an article that isn't in the data. The preview image matches `data.json`. |
-| D13+ | *(add your own as you resolve 🔀 points)* | | |
+| D13 | Coexistence with the portfolio | The blog (`/personal-blog/*`) and the portfolio (`/`, `HashRouter`) are **independent deployments on one origin** | Cross-site links are plain `<a href>` (a router `Link` can't leave its app). Blog → portfolio: `/` or `https://simplify4me2.github.io/#/...`. Portfolio → blog: `/personal-blog/`. Namespace `localStorage` keys (for example `blog:theme`) because the origin is shared. The portfolio is **not** refactored as part of this roadmap. |
+| D14 | Router mode (S5.1) | **Data mode** (`createBrowserRouter` + `RouterProvider`) | Gives `<ScrollRestoration />`, `errorElement` and loaders, and is the closest base for the Plan B framework-mode migration. |
+| D15+ | *(add your own as you resolve 🔀 points)* | | |
 
 ---
 
@@ -104,6 +106,8 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
   - [ ] S5.8 Document titles per page
   - [ ] S5.9 Not-found route
   - [ ] S5.10 Routing tests
+  - [ ] S5.11 GitHub Pages deep-link fallback (`404.html`)
+  - [ ] S5.12 Cross-site links and storage namespacing
 - **Phase 6 — Data layer**
   - [ ] S6.1 `Article` type
   - [ ] S6.2 Article repository functions
@@ -137,6 +141,14 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
   - [ ] S10.3 Verify production
   - [ ] S10.4 Clean up the repo and write the README
   - [ ] S10.5 Submit to Frontend Mentor
+- **Phase 11 — Plan B: framework mode + prerendering** *(after Plan A is shipped)*
+  - [ ] S11.1 Branch and baseline
+  - [ ] S11.2 Install the framework-mode tooling
+  - [ ] S11.3 Move the route table to `routes.ts` and the root to `root.tsx`
+  - [ ] S11.4 Configure `basename` and the build for `/personal-blog/`
+  - [ ] S11.5 Prerender all routes
+  - [ ] S11.6 Update tests and the deploy workflow
+  - [ ] S11.7 Remove the `404.html` workaround and verify
 
 ---
 
@@ -242,7 +254,7 @@ personal-blog/
 - **Steps:**
   1. In `vite.config.ts`, set `base` to `/personal-blog/`.
   2. Run `npm run build && npm run preview`, then check the app loads at `/personal-blog/`.
-- **Hint:** the hash router (D3) handles routes, but **assets** still need the base path. Anything in `public/` must be referenced through `import.meta.env.BASE_URL`. Anything imported from `src/` is rewritten for you.
+- **Hint:** `base` is the single source of truth for the sub-path. **Assets** need it (anything in `public/` must be referenced through `import.meta.env.BASE_URL`; anything imported from `src/` is rewritten for you), and the router's `basename` will reuse it in S5.1. Also keep internal links on the router's `Link`/`NavLink`: a plain `href="/"` leaves `/personal-blog/` and lands on your portfolio.
 - **Done when:**
   - [ ] Preview works under the sub-path.
 
@@ -397,16 +409,15 @@ personal-blog/
 
 ## Phase 5 — Routing & layout
 
-### S5.1 — Install React Router and choose the router mode
+### S5.1 — Install React Router and set up data mode (Plan A)
 - **Steps:**
-  1. `npm i react-router`. In v7, everything imports from `react-router`. Don't install `react-router-dom`.
-  2. 🔀 **Decision point — declarative vs data mode** (both are hash-based, per D3):
-     - **Declarative** (`<HashRouter>` + `<Routes>`): fewest concepts.
-     - **Data mode** (`createHashRouter` + `<RouterProvider>`): adds `<ScrollRestoration />`, `errorElement`, and optional loaders (for example, resolving an article by slug before render).
-     - Data mode gives you scroll restoration for free, which you'll want in S5.7.
-- **Docs:** https://reactrouter.com/start/modes
+  1. `npm i react-router`. In v8.5.1, everything imports from `react-router`. Don't install `react-router-dom`.
+  2. Use **data mode** (`createBrowserRouter` + `<RouterProvider>`, decision D14). It adds `<ScrollRestoration />`, `errorElement` and optional loaders (for example, resolving an article by slug before render).
+  3. Pass `basename` to the router from `import.meta.env.BASE_URL` (trim the trailing slash if the router requires it) so `vite.config.ts` stays the single source of truth for `/personal-blog/`.
+  4. Keep the route table in its own `router.tsx` and avoid depending on browser-only APIs there. That makes the Plan B migration (Phase 11) a move, not a rewrite.
+- **Docs:** https://reactrouter.com/start/modes · https://reactrouter.com/api/data-routers/createBrowserRouter
 - **Done when:**
-  - [ ] The mode is chosen and logged.
+  - [ ] The router is mounted and the `basename` is derived from the Vite `base`.
 
 ### S5.2 — Route table + page stubs
 - **Routes:**
@@ -424,7 +435,7 @@ personal-blog/
   1. Create a stub component per page (just an `<h1>`).
   2. Nest all routes under one layout route (S5.3).
 - **Done when:**
-  - [ ] Typing `/#/about` and the other paths in the URL bar shows each stub.
+  - [ ] Opening `/personal-blog/about` (dev: `/personal-blog/about` via the Vite server) and the other paths shows each stub.
 
 ### S5.3 — Root layout
 - **Steps:**
@@ -439,6 +450,7 @@ personal-blog/
   1. Header contents: the avatar (`image-avatar.jpg`, with alt text that fits whether or not it's a link), the nav links Home / Blog / About / Newsletter, and the theme toggle.
   2. Use `NavLink`. It sets `aria-current="page"` automatically on the active link. Style the active state (the underline in the preview) by targeting that attribute, or with NavLink's `className` callback.
   3. Edge case: **Blog** should stay active on `/blog/:slug`. Check how NavLink's matching works (the `end` prop) for both `/` and `/blog`.
+  3. Never use a plain `<a href="/…">` for internal navigation. It ignores the `basename`, does a full page load, and `/` leaves the blog entirely.
 - **Done when:**
   - [ ] The active link is styled and announced, and Tab order is logical.
 
@@ -463,8 +475,8 @@ personal-blog/
 ### S5.7 — Skip link, focus and scroll management
 - **Steps:**
   1. **Skip link:** a "Skip to content" link that's visually hidden until focused.
-     - ⚠️ **Hash-router gotcha:** a plain `href="#main-content"` changes the *route* (`/#main-content`). Make it move focus to `<main>` in a click handler (`main` needs `tabIndex={-1}`), or render it as a button.
-  2. **Scroll:** going from one page to another should start at the top. That's `<ScrollRestoration />` in data mode, or a small effect on `location.pathname` in declarative mode.
+     - A plain `href="#main-content"` is fine with browser routing, but it still changes the URL. Prefer a click handler that moves focus to `<main>` (`main` needs `tabIndex={-1}`) so the URL stays clean.
+  2. **Scroll:** going from one page to another should start at the top. Use `<ScrollRestoration />` (data mode).
   3. **Focus on route change:** 🔀 move focus to the new page's `<h1>` or `<main>`, or leave it on the link. Read about the trade-offs (screen-reader announcement versus keeping the user's place) and pick one.
 - **Done when:**
   - [ ] Keyboard users can skip the nav on every page, and navigation starts at the top.
@@ -480,12 +492,31 @@ personal-blog/
 - **Steps:**
   1. A friendly 404 page with a link home, used by the `*` route and later by unknown slugs (S7.8).
 - **Done when:**
-  - [ ] `/#/does-not-exist` shows it.
+  - [ ] `/personal-blog/does-not-exist` shows it (after S5.11 this also works on a fresh load in production).
 
 ### S5.10 — Routing tests
 - **Cases to cover:** each route renders its heading · the active nav link has `aria-current="page"` · the mobile menu toggles `aria-expanded` and closes on Escape · an unknown route shows the 404.
-- **Hint:** render the routes inside a `MemoryRouter` (or `createMemoryRouter`) in tests, so the hash URL doesn't matter there.
+- **Hint:** render the routes with `createMemoryRouter` in tests, passing the same route objects and `basename`-free paths, so the URL doesn't matter there.
 - **Commit:** `feat: routing, layout, navigation and footer`
+
+### S5.11 — GitHub Pages deep-link fallback (`404.html`)
+- **Goal:** refreshing or opening `/personal-blog/blog/<slug>` directly loads the app instead of GitHub's 404.
+- **Steps:**
+  1. GitHub Pages has no server rewrite, but it serves `404.html` for unknown paths. Make the build output a copy of `index.html` as `404.html` (a small `postbuild` npm script, or a Vite plugin). Pick whichever you prefer and log the choice.
+  2. 🔀 Know the trade-off: Pages answers those requests with **HTTP 404**, so crawlers may not index article pages. That is the reason Plan B exists (Phase 11).
+- **Done when:**
+  - [ ] `npm run build` produces `dist/404.html`.
+  - [ ] After deploying, a deep link opened in a fresh tab renders the right page.
+
+### S5.12 — Cross-site links and storage namespacing
+- **Goal:** the blog and the portfolio play well together (decision D13).
+- **Steps:**
+  1. Links from the blog to the portfolio are plain `<a>` to `/` or `https://simplify4me2.github.io/#/...`, never a router `Link`.
+  2. Rename the `localStorage` theme key (S4.2/S4.1, including the inline script in `index.html`) to a namespaced key such as `blog:theme`.
+  3. 🔀 Decide whether the two sites should share a theme on purpose. If yes, share the key deliberately and document it.
+  4. Optionally, add a link from the portfolio to `/personal-blog/` (a separate change in the other repo).
+- **Done when:**
+  - [ ] No internal link leaves `/personal-blog/` by accident and the theme key can't collide with the portfolio.
 
 ---
 
@@ -597,7 +628,7 @@ personal-blog/
 - **Steps:**
   1. If `getArticleBySlug` returns `undefined`, render the 404 page (or a data-mode loader can `throw` a 404 response caught by `errorElement`).
 - **Done when:**
-  - [ ] `/#/blog/nope` shows not-found, not a crash.
+  - [ ] `/personal-blog/blog/nope` shows not-found, not a crash.
 - **Tests (pages):** Home shows 5 articles · Blog shows 8 · an article page renders its title, a table and a callout · an unknown slug shows 404.
 - **Commit:** `feat: home, blog, about and article pages with markdown`
 
@@ -710,7 +741,8 @@ personal-blog/
 
 ### S10.3 — Verify production
 - Visit `https://<user>.github.io/personal-blog/`.
-- Load a deep link like `/#/blog/<slug>` directly in a fresh tab.
+- Load a deep link like `/personal-blog/blog/<slug>` directly in a fresh tab, and refresh it (this exercises the `404.html` fallback from S5.11).
+- Confirm that a bad path under `/personal-blog/` shows the blog's not-found page and not your portfolio.
 - Check the theme persists across reloads, the fonts and images load (base path), the favicon shows, and there are no console errors.
 - Run Lighthouse on the live URL.
 
@@ -724,6 +756,70 @@ personal-blog/
 - Submit the repo and live URLs.
 - Ask specific feedback questions, for example about the callout plugin approach, `useActionState` reset handling, or focus management on route change.
 - Share in the community **#finished-projects** channel: https://www.frontendmentor.io/community
+
+---
+
+## Phase 11 — Plan B: framework mode + prerendering
+
+> **Do this only after Plan A is live.** Goal: real HTML per URL (correct HTTP status, SEO, link previews) and no `404.html` workaround, while keeping the same URLs and the same GitHub Pages hosting. The portfolio is unaffected (D13).
+
+### S11.1 — Branch and baseline
+- **Steps:**
+  1. Create a branch such as `feat/framework-mode`.
+  2. Record the baseline: the URLs you support, the test results, the bundle size, and Lighthouse scores. You'll compare against them in S11.7.
+- **Done when:**
+  - [ ] The baseline is written down and Plan A is tagged or merged.
+
+### S11.2 — Install the framework-mode tooling
+- **Steps:**
+  1. Install the React Router Vite plugin and the dev tooling that the official framework-mode docs list for your React Router version (check the installation page, because package names have changed between versions).
+  2. Read the "SPA mode" and "Pre-rendering" guides before changing anything.
+  3. 🔀 Choose SPA mode (`ssr: false`) with prerendering. This needs no server, which matches hosting on Pages (react.dev notes that frameworks work as static sites).
+- **Docs:** https://reactrouter.com/start/framework/installation · https://reactrouter.com/how-to/pre-rendering · https://reactrouter.com/how-to/spa
+- **Done when:**
+  - [ ] The tooling is installed and the Vite config uses the React Router plugin.
+
+### S11.3 — Move the route table to `routes.ts` and the root to `root.tsx`
+- **Steps:**
+  1. Framework mode reads routes from `app/routes.ts` using the config helpers (`route`, `index`, `layout`). Translate the table from S5.2 into it, keeping the same paths.
+  2. Move the layout and the `<ScrollRestoration />`/`errorElement` pieces into the root module (`root.tsx`, with its `Layout`, `ErrorBoundary` and `HydrateFallback` exports as the docs describe).
+  3. Each page becomes a route module. Move the slug lookup from S7.8 into a `loader` and throw a 404 response for an unknown slug.
+  4. Note that `index.html` is generated by the framework. Move the pre-paint theme script (S4.1) into `root.tsx` so it still runs before first paint.
+- **Done when:**
+  - [ ] `npm run dev` serves every route and the not-found flow still works.
+
+### S11.4 — Configure `basename` and the build for `/personal-blog/`
+- **Steps:**
+  1. In `react-router.config.ts`, set the `basename` and keep the Vite `base` aligned with it (both `/personal-blog/`). A mismatch is the most common cause of broken assets or 404 deep links.
+  2. Check where the framework writes its client build (it differs from `dist/`), because the workflow in S11.6 must upload that folder.
+- **Done when:**
+  - [ ] `npm run build && npm run preview` serves the app under `/personal-blog/` with working assets.
+
+### S11.5 — Prerender all routes
+- **Steps:**
+  1. Configure `prerender` in `react-router.config.ts`. Static paths are `/`, `/blog`, `/about`, `/newsletter`. The article paths come from `data.json`, so derive them from the same repository function you wrote in S6.2 (you can import it in the config) and don't maintain a second list.
+  2. 🔀 Decide how to handle the not-found page. Prerendering a catch-all is not possible for unknown paths, so check how the docs recommend serving `404.html` from the framework build and use that.
+  3. Inspect the build output: each route should have its own `index.html` with the real content and the `<title>`/`<meta>` from S5.8.
+- **Done when:**
+  - [ ] The build output contains one HTML file per route, and viewing the source of an article page shows the article text.
+
+### S11.6 — Update tests and the deploy workflow
+- **Steps:**
+  1. Update tests for any moved modules. Use the testing helper for framework route stubs, or keep testing components with `createMemoryRouter` (S5.10).
+  2. In `.github/workflows/deploy.yml`, change the uploaded artifact path to the framework's client build folder, and keep the working directory set to `app/`.
+  3. Remove the `postbuild` copy step from S5.11 (do this in S11.7 once you've verified).
+- **Done when:**
+  - [ ] `npm run test:run`, `npx tsc -b` and `npm run lint` pass, and the workflow builds locally the way CI does.
+
+### S11.7 — Remove the `404.html` workaround and verify
+- **Steps:**
+  1. Deploy from the branch (or merge). Then check production: deep links, refresh on an article, a bad path, and the HTTP status of a prerendered article (it should be 200, not 404).
+  2. Compare against the S11.1 baseline: Lighthouse, bundle size, and the "view source" check.
+  3. Re-check D13: the portfolio at `/` still works and the cross-links from S5.12 still point to the right places.
+  4. Update the Decisions log and the README with what you learned.
+- **Commit:** `feat: migrate to react router framework mode with prerendering`
+- **Done when:**
+  - [ ] All URLs behave exactly as before, with real HTML and correct status codes, and the `404.html` hack is gone.
 
 ---
 
@@ -744,7 +840,7 @@ personal-blog/
 
 | User story | Steps |
 |------------|-------|
-| Navigate to all pages by clicking or with the keyboard | S5.2–S5.7, S9.3 |
+| Navigate to all pages by clicking or with the keyboard | S5.2–S5.7, S5.11, S9.3 |
 | Read all articles | S6.2, S7.2, S7.4–S7.8 |
 | Select their colour theme | S4.1–S4.5 |
 | Subscribe to the newsletter | S8.2–S8.4 |
@@ -756,7 +852,8 @@ personal-blog/
 ## Appendix C — Learning resources
 
 - React 19 docs: https://react.dev/blog/2024/12/05/react-19
-- React Router v7: https://reactrouter.com/home
+- React Router V8.5.1: https://reactrouter.com/home
+- React docs on routing and frameworks: https://react.dev/learn/creating-a-react-app · https://react.dev/learn/build-a-react-app-from-scratch
 - Tailwind CSS v4: https://tailwindcss.com/docs
 - WAI-ARIA Authoring Practices (disclosure, live regions): https://www.w3.org/WAI/ARIA/apg/
 - web.dev on dark mode and FOUC: https://web.dev/articles/prefers-color-scheme
