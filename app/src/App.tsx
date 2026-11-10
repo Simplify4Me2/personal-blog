@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type FormEvent, type JSX, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import articlesData from './data.json'
+import { MarkdownContent } from './markdown'
 import './App.css'
 
 type Article = {
@@ -353,170 +354,6 @@ function NewsletterPage() {
   )
 }
 
-function InlineMarkdown({ text }: { text: string }) {
-  const tokens = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|\[[^\]]+\]\([^)]+\))/g)
-
-  return (
-    <>
-      {tokens.map((token, index) => {
-        if (token.startsWith('**') && token.endsWith('**')) {
-          return <strong key={index}>{token.slice(2, -2)}</strong>
-        }
-        if (token.startsWith('*') && token.endsWith('*')) {
-          return <em key={index}>{token.slice(1, -1)}</em>
-        }
-        if (token.startsWith('`') && token.endsWith('`')) {
-          return <code key={index}>{token.slice(1, -1)}</code>
-        }
-        const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-        if (linkMatch) {
-          return <a href={linkMatch[2]} key={index}>{linkMatch[1]}</a>
-        }
-        return token
-      })}
-    </>
-  )
-}
-
-function isBlockStart(line: string) {
-  return /^(#{1,6}\s|---\s*$|```|>\s?|[-*]\s+|\d+\.\s+|\|)/.test(line)
-}
-
-function MarkdownContent({ content }: { content: string }) {
-  const lines = content.split('\n')
-  const blocks: ReactNode[] = []
-  let index = 0
-
-  while (index < lines.length) {
-    const line = lines[index].trim()
-
-    if (!line) {
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('```')) {
-      const codeLines: string[] = []
-      index += 1
-      while (index < lines.length && !lines[index].trim().startsWith('```')) {
-        codeLines.push(lines[index])
-        index += 1
-      }
-      index += 1
-      blocks.push(<pre key={blocks.length}><code>{codeLines.join('\n')}</code></pre>)
-      continue
-    }
-
-    const heading = line.match(/^(#{1,6})\s+(.*)$/)
-    if (heading) {
-      const HeadingTag = `h${heading[1].length}` as keyof JSX.IntrinsicElements
-      blocks.push(
-        <HeadingTag key={blocks.length}>
-          <InlineMarkdown text={heading[2]} />
-        </HeadingTag>,
-      )
-      index += 1
-      continue
-    }
-
-    if (/^---\s*$/.test(line)) {
-      blocks.push(<hr key={blocks.length} />)
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('>')) {
-      const quoteLines: string[] = []
-      while (index < lines.length && lines[index].trim().startsWith('>')) {
-        quoteLines.push(lines[index].trim().replace(/^>\s?/, '').trim())
-        index += 1
-      }
-      const callout = quoteLines[0]?.match(/^\*\*(Warning|Tip|Information):\s*(.*?)\*\*$/)
-      if (callout) {
-        const iconName = callout[1] === 'Warning' ? 'warning' : callout[1] === 'Tip' ? 'tip' : 'info'
-        blocks.push(
-          <aside className={`callout callout--${callout[1].toLowerCase()}`} key={blocks.length}>
-            <div className="callout-heading">
-              <img src={`/assets/images/icon-${iconName}.svg`} alt="" />
-              <h3>{callout[1]}: {callout[2]}</h3>
-            </div>
-            {quoteLines.slice(1).join(' ').trim() && (
-              <p><InlineMarkdown text={quoteLines.slice(1).join(' ')} /></p>
-            )}
-          </aside>,
-        )
-      } else {
-        blocks.push(
-          <blockquote key={blocks.length}>
-            {quoteLines.map((quote, quoteIndex) => (
-              <p key={quoteIndex}><InlineMarkdown text={quote} /></p>
-            ))}
-          </blockquote>,
-        )
-      }
-      continue
-    }
-
-    if (/^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
-      const ordered = /^\d+\.\s+/.test(line)
-      const ListTag = ordered ? 'ol' : 'ul'
-      const listItems: string[] = []
-      const pattern = ordered ? /^\d+\.\s+/ : /^[-*]\s+/
-      while (index < lines.length && pattern.test(lines[index].trim())) {
-        listItems.push(lines[index].trim().replace(pattern, ''))
-        index += 1
-      }
-      blocks.push(
-        <ListTag key={blocks.length}>
-          {listItems.map((item, itemIndex) => (
-            <li key={itemIndex}><InlineMarkdown text={item} /></li>
-          ))}
-        </ListTag>,
-      )
-      continue
-    }
-
-    if (line.startsWith('|')) {
-      const tableRows: string[][] = []
-      while (index < lines.length && lines[index].trim().startsWith('|')) {
-        const cells = lines[index].trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim())
-        if (!cells.every((cell) => /^:?-{3,}:?$/.test(cell))) tableRows.push(cells)
-        index += 1
-      }
-      const [header, ...rows] = tableRows
-      blocks.push(
-        <div className="table-scroll" key={blocks.length}>
-          <table>
-            <thead><tr>{header?.map((cell, cellIndex) => <th key={cellIndex}><InlineMarkdown text={cell} /></th>)}</tr></thead>
-            <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => <td key={cellIndex}><InlineMarkdown text={cell} /></td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>,
-      )
-      continue
-    }
-
-    const paragraph = [line]
-    index += 1
-    while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index].trim())) {
-      paragraph.push(lines[index].trim())
-      index += 1
-    }
-    blocks.push(
-      <p key={blocks.length}>
-        <InlineMarkdown text={paragraph.join(' ')} />
-      </p>,
-    )
-  }
-
-  return <div className="article-content">{blocks}</div>
-}
-
 function ArticlePage({ article }: { article: Article }) {
   return (
     <article className="content-section article-page">
@@ -548,7 +385,7 @@ function App() {
       ? route.article?.title ?? 'Article not found'
       : route.page === 'not-found'
         ? 'Page not found'
-        : `Frontend Mentor | Personal blog${route.page === 'home' ? '' : ` - ${route.page === 'about' ? 'About me' : route.page[0].toUpperCase() + route.page.slice(1)}`}`
+        : `Frontend Mentor | Personal blog${route.page === 'home' ? '' : ` - ${route.page === 'about' ? 'About me' : route.page.charAt(0).toUpperCase() + route.page.slice(1)}`}`
   useEffect(() => {
     document.title = pageTitle
   }, [pageTitle])
