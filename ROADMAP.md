@@ -71,12 +71,12 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
 
 - **Phase 0 — Preparation**
   - [x] S0.1 Create a working branch
-  - [ ] S0.2 Study the design and build a component inventory
-  - [ ] S0.3 Extract design tokens into a notes file
+  - [x] S0.2 Study the design and build a component inventory
+  - [x] S0.3 Extract design tokens into a notes file
 - **Phase 1 — Scaffold**
-  - [ ] S1.1 Scaffold the Vite + React + TS app in `app/`
-  - [ ] S1.2 Strip the boilerplate
-  - [ ] S1.3 Tighten TypeScript and lint settings
+  - [x] S1.1 Scaffold the Vite + React + TS app in `app/`
+  - [x] S1.2 Strip the boilerplate
+  - [x] S1.3 Tighten TypeScript and lint settings
   - [ ] S1.4 Configure the base path for GitHub Pages
   - [ ] S1.5 Bring the assets and data across
 - **Phase 2 — Testing harness**
