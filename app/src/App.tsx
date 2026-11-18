@@ -3,8 +3,7 @@ import articlesData from './data.json'
 import { MarkdownContent } from './markdown'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
-import { SocialLinks } from './components/social-links'
-import { Footer } from './components/footer'
+import { Footer, SocialLinks } from './components' 
 
 type Article = {
   title: string
