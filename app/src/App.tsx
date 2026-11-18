@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'rea
 import articlesData from './data.json'
 import { MarkdownContent } from './markdown'
 import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 
 type Article = {
   title: string
@@ -378,8 +379,30 @@ function NotFoundPage() {
   )
 }
 
+let router = createBrowserRouter([
+  {
+    path: `${import.meta.env.BASE_URL}`,
+    Component: HomePage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/blog`,
+    Component: BlogPage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/about`,
+    Component: AboutPage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/newsletter`,
+    Component: NewsletterPage
+  }
+])
+
 function App() {
-  const route = routeFromPath(window.location.pathname)
+  const route = routeFromPath(window.location.pathname);
+
+  console.log("route", route);
+
   const pageTitle =
     route.page === 'article'
       ? route.article?.title ?? 'Article not found'
@@ -401,7 +424,10 @@ function App() {
   return (
     <div className="site-shell">
       <Header page={route.page === 'article' ? 'blog' : route.page} />
-      <main id="main-content">{page}</main>
+      {/* <main id="main-content">{page}</main> */}
+      <main id="main-content">
+        <RouterProvider router={router} />
+      </main>
       <Footer />
     </div>
   )
