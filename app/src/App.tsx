@@ -3,6 +3,8 @@ import articlesData from './data.json'
 import { MarkdownContent } from './markdown'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import { SocialLinks } from './components/social-links'
+import { Footer } from './components/footer'
 
 type Article = {
   title: string
@@ -19,17 +21,6 @@ const navigation = [
   { label: 'Blog', href: '/blog', page: 'blog' },
   { label: 'About', href: '/about', page: 'about' },
   { label: 'Newsletter', href: '/newsletter', page: 'newsletter' },
-]
-
-const socials = [
-  { label: 'X', href: 'https://x.com/', icon: 'logo-x.svg' },
-  { label: 'GitHub', href: 'https://github.com/', icon: 'logo-github.svg' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/', icon: 'logo-linkedin.svg' },
-  {
-    label: 'Frontend Mentor',
-    href: 'https://www.frontendmentor.io/',
-    icon: 'logo-frontend-mentor.svg',
-  },
 ]
 
 function routeFromPath(pathname: string) {
@@ -49,25 +40,6 @@ function routeFromPath(pathname: string) {
   }
 
   return { page: 'not-found', article: undefined }
-}
-
-function SocialLinks({ boxed = false }: { boxed?: boolean }) {
-  return (
-    <ul className={`social-links${boxed ? ' social-links--boxed' : ''}`}>
-      {socials.map((social) => (
-        <li key={social.label}>
-          <a
-            href={social.href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={social.label}
-          >
-            <img src={`${import.meta.env.BASE_URL}assets/images/${social.icon}`} alt="" />
-          </a>
-        </li>
-      ))}
-    </ul>
-  )
 }
 
 function Header({ page }: { page: string }) {
@@ -136,15 +108,6 @@ function Header({ page }: { page: string }) {
         </button>
       </div>
     </header>
-  )
-}
-
-function Footer() {
-  return (
-    <footer className="site-footer">
-      <p>Made with <span aria-label="love">♥</span> and <span aria-label="coffee">☕</span></p>
-      <SocialLinks />
-    </footer>
   )
 }
 
