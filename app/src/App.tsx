@@ -1,34 +1,13 @@
-import { useEffect, useRef, useState, type FormEvent, type JSX, type ReactNode } from 'react'
-import articlesData from './data.json'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { MarkdownContent } from './markdown'
 import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import { ArticleList, Footer, Header, SocialLinks, PageHeading } from './components' 
 
-type Article = {
-  title: string
-  slug: string
-  publishedAt: string
-  description: string
-  content: string
-}
+import type { Article } from './models/article.model'
+import articlesData from './data.json'
 
 const articles: Article[] = articlesData
-
-const navigation = [
-  { label: 'Home', href: '/', page: 'home' },
-  { label: 'Blog', href: '/blog', page: 'blog' },
-  { label: 'About', href: '/about', page: 'about' },
-  { label: 'Newsletter', href: '/newsletter', page: 'newsletter' },
-]
-
-const socials = [
-  { label: 'X', href: 'https://x.com/', icon: 'logo-x.svg' },
-  { label: 'GitHub', href: 'https://github.com/', icon: 'logo-github.svg' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/', icon: 'logo-linkedin.svg' },
-  {
-    label: 'Frontend Mentor',
-    href: 'https://www.frontendmentor.io/',
-    icon: 'logo-frontend-mentor.svg',
-  },
-]
 
 function routeFromPath(pathname: string) {
   const path = pathname.replace(/\/+$/, '') || '/'
@@ -49,108 +28,6 @@ function routeFromPath(pathname: string) {
   return { page: 'not-found', article: undefined }
 }
 
-function SocialLinks({ boxed = false }: { boxed?: boolean }) {
-  return (
-    <ul className={`social-links${boxed ? ' social-links--boxed' : ''}`}>
-      {socials.map((social) => (
-        <li key={social.label}>
-          <a
-            href={social.href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={social.label}
-          >
-            <img src={`/assets/images/${social.icon}`} alt="" />
-          </a>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Header({ page }: { page: string }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
-    localStorage.getItem('blog-theme') === 'dark' ? 'dark' : 'light',
-  )
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    localStorage.setItem('blog-theme', theme)
-  }, [theme])
-
-  return (
-    <header className="site-header">
-      <a className="avatar-link" href="/" aria-label="Paulina's blog home">
-        <img
-          className="avatar"
-          src="/assets/images/image-avatar.jpg"
-          alt="Paulina"
-          width="48"
-          height="48"
-        />
-      </a>
-      <nav
-        id="main-navigation"
-        className={`site-nav${menuOpen ? ' site-nav--open' : ''}`}
-        aria-label="Main navigation"
-      >
-        {navigation.map((item) => (
-          <a
-            className={page === item.page ? 'is-active' : undefined}
-            href={item.href}
-            aria-current={page === item.page ? 'page' : undefined}
-            key={item.page}
-            onClick={() => setMenuOpen(false)}
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
-      <div className="header-actions">
-        <button
-          className="theme-toggle"
-          type="button"
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-        >
-          <img
-            src={`/assets/images/icon-${theme === 'light' ? 'moon' : 'sun'}.svg`}
-            alt=""
-          />
-        </button>
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-expanded={menuOpen}
-          aria-controls="main-navigation"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <img
-            src={`/assets/images/icon-menu${menuOpen ? '-close' : ''}.svg`}
-            alt=""
-          />
-        </button>
-      </div>
-    </header>
-  )
-}
-
-function Footer() {
-  return (
-    <footer className="site-footer">
-      <p>Made with <span aria-label="love">♥</span> and <span aria-label="coffee">☕</span></p>
-      <SocialLinks />
-    </footer>
-  )
-}
-
-function PageHeading({ children, level = 1 }: { children: ReactNode; level?: 1 | 2 }) {
-  const HeadingTag = level === 1 ? 'h1' : 'h2'
-  return <HeadingTag className="page-heading">{children}</HeadingTag>
-}
-
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -158,30 +35,6 @@ function formatDate(date: string) {
     day: 'numeric',
     timeZone: 'UTC',
   })
-}
-
-function ArticleList({
-  items,
-  descriptions = false,
-}: {
-  items: Article[]
-  descriptions?: boolean
-}) {
-  return (
-    <ul className={`article-list${descriptions ? ' article-list--descriptions' : ''}`}>
-      {items.map((article) => (
-        <li key={article.slug}>
-          <article>
-            <h3>
-              <a href={`/article/${article.slug}`}>{article.title}</a>
-            </h3>
-            <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
-            {descriptions && <p>{article.description}</p>}
-          </article>
-        </li>
-      ))}
-    </ul>
-  )
 }
 
 function HomePage() {
@@ -262,10 +115,10 @@ function AboutPage() {
         <picture>
           <source
             media="(max-width: 600px)"
-            srcSet="/assets/images/image-workspace-small.jpg"
+            srcSet={`${import.meta.env.BASE_URL}assets/images/image-workspace-small.jpg`}
           />
           <img
-            src="/assets/images/image-workspace-large.jpg"
+            src={`${import.meta.env.BASE_URL}assets/images/image-workspace-large.jpg`}
             alt="Paulina's bright home office with plants, bookshelves, and a computer desk"
             width="1200"
             height="750"
@@ -338,7 +191,7 @@ function NewsletterPage() {
             role={feedback === 'error' ? 'alert' : 'status'}
           >
             <img
-              src={`/assets/images/icon-${feedback === 'error' ? 'error' : 'success'}.svg`}
+              src={`${import.meta.env.BASE_URL}assets/images/icon-${feedback === 'error' ? 'error' : 'success'}.svg`}
               alt=""
             />
             {feedback === 'error'
@@ -351,170 +204,6 @@ function NewsletterPage() {
       <p className="unsubscribe-note">Unsubscribe anytime. No spam, I promise <span aria-hidden="true">🙂</span></p>
     </section>
   )
-}
-
-function InlineMarkdown({ text }: { text: string }) {
-  const tokens = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|\[[^\]]+\]\([^)]+\))/g)
-
-  return (
-    <>
-      {tokens.map((token, index) => {
-        if (token.startsWith('**') && token.endsWith('**')) {
-          return <strong key={index}>{token.slice(2, -2)}</strong>
-        }
-        if (token.startsWith('*') && token.endsWith('*')) {
-          return <em key={index}>{token.slice(1, -1)}</em>
-        }
-        if (token.startsWith('`') && token.endsWith('`')) {
-          return <code key={index}>{token.slice(1, -1)}</code>
-        }
-        const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-        if (linkMatch) {
-          return <a href={linkMatch[2]} key={index}>{linkMatch[1]}</a>
-        }
-        return token
-      })}
-    </>
-  )
-}
-
-function isBlockStart(line: string) {
-  return /^(#{1,6}\s|---\s*$|```|>\s?|[-*]\s+|\d+\.\s+|\|)/.test(line)
-}
-
-function MarkdownContent({ content }: { content: string }) {
-  const lines = content.split('\n')
-  const blocks: ReactNode[] = []
-  let index = 0
-
-  while (index < lines.length) {
-    const line = lines[index].trim()
-
-    if (!line) {
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('```')) {
-      const codeLines: string[] = []
-      index += 1
-      while (index < lines.length && !lines[index].trim().startsWith('```')) {
-        codeLines.push(lines[index])
-        index += 1
-      }
-      index += 1
-      blocks.push(<pre key={blocks.length}><code>{codeLines.join('\n')}</code></pre>)
-      continue
-    }
-
-    const heading = line.match(/^(#{1,6})\s+(.*)$/)
-    if (heading) {
-      const HeadingTag = `h${heading[1].length}` as keyof JSX.IntrinsicElements
-      blocks.push(
-        <HeadingTag key={blocks.length}>
-          <InlineMarkdown text={heading[2]} />
-        </HeadingTag>,
-      )
-      index += 1
-      continue
-    }
-
-    if (/^---\s*$/.test(line)) {
-      blocks.push(<hr key={blocks.length} />)
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('>')) {
-      const quoteLines: string[] = []
-      while (index < lines.length && lines[index].trim().startsWith('>')) {
-        quoteLines.push(lines[index].trim().replace(/^>\s?/, '').trim())
-        index += 1
-      }
-      const callout = quoteLines[0]?.match(/^\*\*(Warning|Tip|Information):\s*(.*?)\*\*$/)
-      if (callout) {
-        const iconName = callout[1] === 'Warning' ? 'warning' : callout[1] === 'Tip' ? 'tip' : 'info'
-        blocks.push(
-          <aside className={`callout callout--${callout[1].toLowerCase()}`} key={blocks.length}>
-            <div className="callout-heading">
-              <img src={`/assets/images/icon-${iconName}.svg`} alt="" />
-              <h3>{callout[1]}: {callout[2]}</h3>
-            </div>
-            {quoteLines.slice(1).join(' ').trim() && (
-              <p><InlineMarkdown text={quoteLines.slice(1).join(' ')} /></p>
-            )}
-          </aside>,
-        )
-      } else {
-        blocks.push(
-          <blockquote key={blocks.length}>
-            {quoteLines.map((quote, quoteIndex) => (
-              <p key={quoteIndex}><InlineMarkdown text={quote} /></p>
-            ))}
-          </blockquote>,
-        )
-      }
-      continue
-    }
-
-    if (/^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
-      const ordered = /^\d+\.\s+/.test(line)
-      const ListTag = ordered ? 'ol' : 'ul'
-      const listItems: string[] = []
-      const pattern = ordered ? /^\d+\.\s+/ : /^[-*]\s+/
-      while (index < lines.length && pattern.test(lines[index].trim())) {
-        listItems.push(lines[index].trim().replace(pattern, ''))
-        index += 1
-      }
-      blocks.push(
-        <ListTag key={blocks.length}>
-          {listItems.map((item, itemIndex) => (
-            <li key={itemIndex}><InlineMarkdown text={item} /></li>
-          ))}
-        </ListTag>,
-      )
-      continue
-    }
-
-    if (line.startsWith('|')) {
-      const tableRows: string[][] = []
-      while (index < lines.length && lines[index].trim().startsWith('|')) {
-        const cells = lines[index].trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim())
-        if (!cells.every((cell) => /^:?-{3,}:?$/.test(cell))) tableRows.push(cells)
-        index += 1
-      }
-      const [header, ...rows] = tableRows
-      blocks.push(
-        <div className="table-scroll" key={blocks.length}>
-          <table>
-            <thead><tr>{header?.map((cell, cellIndex) => <th key={cellIndex}><InlineMarkdown text={cell} /></th>)}</tr></thead>
-            <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => <td key={cellIndex}><InlineMarkdown text={cell} /></td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>,
-      )
-      continue
-    }
-
-    const paragraph = [line]
-    index += 1
-    while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index].trim())) {
-      paragraph.push(lines[index].trim())
-      index += 1
-    }
-    blocks.push(
-      <p key={blocks.length}>
-        <InlineMarkdown text={paragraph.join(' ')} />
-      </p>,
-    )
-  }
-
-  return <div className="article-content">{blocks}</div>
 }
 
 function ArticlePage({ article }: { article: Article }) {
@@ -541,14 +230,36 @@ function NotFoundPage() {
   )
 }
 
+let router = createBrowserRouter([
+  {
+    path: `${import.meta.env.BASE_URL}`,
+    Component: HomePage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/blog`,
+    Component: BlogPage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/about`,
+    Component: AboutPage
+  },
+  {
+    path: `${import.meta.env.BASE_URL}/newsletter`,
+    Component: NewsletterPage
+  }
+])
+
 function App() {
-  const route = routeFromPath(window.location.pathname)
+  const route = routeFromPath(window.location.pathname);
+
+  console.log("route", route);
+
   const pageTitle =
     route.page === 'article'
       ? route.article?.title ?? 'Article not found'
       : route.page === 'not-found'
         ? 'Page not found'
-        : `Frontend Mentor | Personal blog${route.page === 'home' ? '' : ` - ${route.page === 'about' ? 'About me' : route.page[0].toUpperCase() + route.page.slice(1)}`}`
+        : `Frontend Mentor | Personal blog${route.page === 'home' ? '' : ` - ${route.page === 'about' ? 'About me' : route.page.charAt(0).toUpperCase() + route.page.slice(1)}`}`
   useEffect(() => {
     document.title = pageTitle
   }, [pageTitle])
@@ -564,7 +275,10 @@ function App() {
   return (
     <div className="site-shell">
       <Header page={route.page === 'article' ? 'blog' : route.page} />
-      <main id="main-content">{page}</main>
+      {/* <main id="main-content">{page}</main> */}
+      <main id="main-content">
+        <RouterProvider router={router} />
+      </main>
       <Footer />
     </div>
   )
