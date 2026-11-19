@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { MarkdownContent } from './markdown'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+// import { MarkdownContent } from './markdown'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { ArticleList, Footer, Header, SocialLinks, PageHeading } from './components' 
@@ -28,14 +28,14 @@ function routeFromPath(pathname: string) {
   return { page: 'not-found', article: undefined }
 }
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  })
-}
+// function formatDate(date: string) {
+//   return new Date(date).toLocaleDateString('en-US', {
+//     year: 'numeric',
+//     month: 'long',
+//     day: 'numeric',
+//     timeZone: 'UTC',
+//   })
+// }
 
 function HomePage() {
   return (
@@ -206,29 +206,29 @@ function NewsletterPage() {
   )
 }
 
-function ArticlePage({ article }: { article: Article }) {
-  return (
-    <article className="content-section article-page">
-      <a className="back-link" href="/blog">← Back to Articles</a>
-      <PageHeading>{article.title}</PageHeading>
-      <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
-      <p className="article-lead">{article.description}</p>
-      {article.content !== article.description && (
-        <MarkdownContent content={article.content} />
-      )}
-    </article>
-  )
-}
+// function ArticlePage({ article }: { article: Article }) {
+//   return (
+//     <article className="content-section article-page">
+//       <a className="back-link" href="/blog">← Back to Articles</a>
+//       <PageHeading>{article.title}</PageHeading>
+//       <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+//       <p className="article-lead">{article.description}</p>
+//       {article.content !== article.description && (
+//         <MarkdownContent content={article.content} />
+//       )}
+//     </article>
+//   )
+// }
 
-function NotFoundPage() {
-  return (
-    <section className="content-section">
-      <PageHeading>Page not found</PageHeading>
-      <p>Sorry, we couldn&apos;t find that page.</p>
-      <a className="text-link" href="/">Return home <span aria-hidden="true">→</span></a>
-    </section>
-  )
-}
+// function NotFoundPage() {
+//   return (
+//     <section className="content-section">
+//       <PageHeading>Page not found</PageHeading>
+//       <p>Sorry, we couldn&apos;t find that page.</p>
+//       <a className="text-link" href="/">Return home <span aria-hidden="true">→</span></a>
+//     </section>
+//   )
+// }
 
 let router = createBrowserRouter([
   {
@@ -264,13 +264,13 @@ function App() {
     document.title = pageTitle
   }, [pageTitle])
 
-  let page: ReactNode
-  if (route.page === 'home') page = <HomePage />
-  else if (route.page === 'blog') page = <BlogPage />
-  else if (route.page === 'about') page = <AboutPage />
-  else if (route.page === 'newsletter') page = <NewsletterPage />
-  else if (route.page === 'article' && route.article) page = <ArticlePage article={route.article} />
-  else page = <NotFoundPage />
+  // let page: ReactNode
+  // if (route.page === 'home') page = <HomePage />
+  // else if (route.page === 'blog') page = <BlogPage />
+  // else if (route.page === 'about') page = <AboutPage />
+  // else if (route.page === 'newsletter') page = <NewsletterPage />
+  // else if (route.page === 'article' && route.article) page = <ArticlePage article={route.article} />
+  // else page = <NotFoundPage />
 
   return (
     <div className="site-shell">
