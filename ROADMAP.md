@@ -77,7 +77,7 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
   - [x] S1.1 Scaffold the Vite + React + TS app in `app/`
   - [x] S1.2 Strip the boilerplate
   - [x] S1.3 Tighten TypeScript and lint settings
-  - [ ] S1.4 Configure the base path for GitHub Pages
+  - [x] S1.4 Configure the base path for GitHub Pages
   - [ ] S1.5 Bring the assets and data across
 - **Phase 2 — Testing harness**
   - [ ] S2.1 Install and configure Vitest + RTL
@@ -256,7 +256,7 @@ personal-blog/
   2. Run `npm run build && npm run preview`, then check the app loads at `/personal-blog/`.
 - **Hint:** `base` is the single source of truth for the sub-path. **Assets** need it (anything in `public/` must be referenced through `import.meta.env.BASE_URL`; anything imported from `src/` is rewritten for you), and the router's `basename` will reuse it in S5.1. Also keep internal links on the router's `Link`/`NavLink`: a plain `href="/"` leaves `/personal-blog/` and lands on your portfolio.
 - **Done when:**
-  - [ ] Preview works under the sub-path.
+  - [x] Preview works under the sub-path.
 
 ### S1.5 — Bring the assets and data across
 - **Goal:** the app owns its assets. `starter-code/` stays untouched as a reference.
