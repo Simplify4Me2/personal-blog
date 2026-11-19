@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-// import { MarkdownContent } from './markdown'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { ArticleList, Footer, Header, SocialLinks, PageHeading } from './components' 
@@ -27,15 +26,6 @@ function routeFromPath(pathname: string) {
 
   return { page: 'not-found', article: undefined }
 }
-
-// function formatDate(date: string) {
-//   return new Date(date).toLocaleDateString('en-US', {
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric',
-//     timeZone: 'UTC',
-//   })
-// }
 
 function HomePage() {
   return (
@@ -205,20 +195,6 @@ function NewsletterPage() {
     </section>
   )
 }
-
-// function ArticlePage({ article }: { article: Article }) {
-//   return (
-//     <article className="content-section article-page">
-//       <a className="back-link" href="/blog">← Back to Articles</a>
-//       <PageHeading>{article.title}</PageHeading>
-//       <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
-//       <p className="article-lead">{article.description}</p>
-//       {article.content !== article.description && (
-//         <MarkdownContent content={article.content} />
-//       )}
-//     </article>
-//   )
-// }
 
 // function NotFoundPage() {
 //   return (
