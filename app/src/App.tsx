@@ -31,10 +31,6 @@ function App() {
   const location = useLocation();
   const route = routeFromPath(location.pathname);
 
-  // const route = routeFromPath(window.location.pathname);
-
-  console.log("route", route);
-
   const pageTitle =
     route.page === 'article'
       ? route.article?.title ?? 'Article not found'
@@ -45,14 +41,6 @@ function App() {
     document.title = pageTitle
   }, [pageTitle])
 
-  // let page: ReactNode
-  // if (route.page === 'home') page = <HomePage />
-  // else if (route.page === 'blog') page = <BlogPage />
-  // else if (route.page === 'about') page = <AboutPage />
-  // else if (route.page === 'newsletter') page = <NewsletterPage />
-  // else if (route.page === 'article' && route.article) page = <ArticlePage article={route.article} />
-  // else page = <NotFoundPage />
-
   return (
     <div className="site-shell">
       <Header page={route.page === 'article' ? 'blog' : route.page} />
@@ -61,14 +49,6 @@ function App() {
       </main>
       <Footer />
     </div>
-    // <div className="site-shell">
-    //   <Header page={route.page === 'article' ? 'blog' : route.page} />
-    //   {/* <main id="main-content">{page}</main> */}
-    //   <main id="main-content">
-    //     <Outlet />
-    //   </main>
-    //   <Footer />
-    // </div>
   )
 }
 
