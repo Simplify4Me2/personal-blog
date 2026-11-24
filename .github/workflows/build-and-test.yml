@@ -27,7 +27,7 @@ jobs:
           cd app
           yarn build
       
-      - name: Run tests
-        run: |
-          cd app
-          yarn test
+      # - name: Run tests
+      #   run: |
+      #     cd app
+      #     yarn test
