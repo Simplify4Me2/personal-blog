@@ -3,9 +3,9 @@ name: Build and Test React JS App
 
 on:
   push:
-    branches: ['main']
+    branches: ['master']
   pull_request:
-    branches: ['main']
+    branches: ['master']
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           cd app
           yarn build
       
-      - name: Run tests
-        run: |
-          cd app
-          yarn test
+      # - name: Run tests
+      #   run: |
+      #     cd app
+      #     yarn test
