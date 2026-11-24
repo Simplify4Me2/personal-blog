@@ -78,7 +78,7 @@ Answer these before the step in the "Blocks" column. Most can be read off the Fi
   - [x] S1.2 Strip the boilerplate
   - [x] S1.3 Tighten TypeScript and lint settings
   - [x] S1.4 Configure the base path for GitHub Pages
-  - [ ] S1.5 Bring the assets and data across
+  - [x] S1.5 Bring the assets and data across
 - **Phase 2 — Testing harness**
   - [ ] S2.1 Install and configure Vitest + RTL
   - [ ] S2.2 Write a first smoke test
@@ -263,13 +263,10 @@ personal-blog/
 - **Steps:**
   1. Copy `starter-code/data.json` to `app/src/data/articles.json`.
   2. Copy the fonts and images into the app.
-  3. 🔀 **Decision point — where do assets live?**
-     - `src/assets/` (imported): Vite fingerprints the files for cache busting, a missing file breaks the build (good), and the base path is handled for you.
-     - `public/` (referenced by URL): simpler paths, but no hashing, and you must prefix the base path yourself.
-     - Common practice is `src/assets` for anything a component or CSS file references, and `public/` only for files that need a fixed URL, like the favicon.
+  3. `src/assets/` (imported): Vite fingerprints the files for cache busting, a missing file breaks the build (good), and the base path is handled for you.
   4. Copy only the font weights you need. The starter has already removed unused ones.
 - **Done when:**
-  - [ ] The files are in place, the choice is logged, and the favicon shows in the tab.
+  - [x] The files are in place and the favicon shows in the tab.
 - **Commit:** `chore: add assets and article data`
 
 ---
