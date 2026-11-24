@@ -2,7 +2,7 @@ import { SocialLinks } from "../components";
 import { PageHeading } from "../components";
 import { ArticleList } from "../components";
 import type { Article } from "../models/article.model";
-import articlesData from "../data.json";
+import articlesData from '../data/articles.json'
 
 const articles: Article[] = articlesData;
 

@@ -4,7 +4,7 @@ import { Outlet, useLocation } from 'react-router'
 import { Footer, Header } from './components'
 
 import type { Article } from './models/article.model'
-import articlesData from './data.json'
+import articlesData from './data/articles.json'
 
 const articles: Article[] = articlesData
 
@@ -43,7 +43,8 @@ function App() {
 
   return (
     <div className="site-shell">
-      <Header page={route.page === 'article' ? 'blog' : route.page} />
+      {/* <Header page={route.page === 'article' ? 'blog' : route.page} /> */}
+      <Header />
       <main id="main-content">
         <Outlet />
       </main>

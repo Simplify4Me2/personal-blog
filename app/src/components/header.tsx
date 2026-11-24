@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router";
+import { Link } from "react-router";
 
 const navigation = [
   { label: "Home", href: "/", page: "home" },
@@ -8,7 +8,7 @@ const navigation = [
   { label: "Newsletter", href: "/newsletter", page: "newsletter" },
 ];
 
-export function Header({ page }: { page: string }) {
+export function Header() {
   const [theme, setTheme] = useState<"light" | "dark">(() =>
     localStorage.getItem("blog-theme") === "dark" ? "dark" : "light",
   );

@@ -1,5 +1,5 @@
 import { ArticleList, PageHeading } from "../components";
-import articlesData from '../data.json'
+import articlesData from '../data/articles.json'
 import type { Article } from "../models";
 
 const articles: Article[] = articlesData;
